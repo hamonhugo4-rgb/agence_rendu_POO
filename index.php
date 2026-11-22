@@ -9,6 +9,7 @@ require_once './class/Utilitaire.php';
 require_once './class/VeloElectrique.php';
 require_once './class/Client.php';
 require_once './class/Location.php';
+require_once './class/Agence.php';
 
 $clio = new Voiture('AB-123-CD', 'Renault', 'Clio', 42, 5);
 $espace = new Voiture('EF-456-GH', 'Renault', 'Espace', 60, 7);
@@ -51,3 +52,17 @@ $location = new Location($jean, $clio, 3, 151.2);
 echo $location;
 
 echo $location->getDateDebut();
+
+$agence = new Agence('Agence Seine Location');
+$agence->ajouterVehicule($clio)->ajouterVehicule($espace);
+
+var_dump($agence->louerVehicule($jean, 'XX-000-XX', 2) === null); 
+echo $agence->louerVehicule($jean, 'EF-456-GH', 3);               
+var_dump($agence->louerVehicule($jean, 'EF-456-GH', 2) === null); 
+echo count($agence->getVehiculesDisponibles());                   
+
+$agence->rendreVehicule('EF-456-GH', 16000);
+var_dump($agence->louerVehicule($jean, 'EF-456-GH', 2) === null); 
+$espace->entretenir();
+var_dump($agence->louerVehicule($jean, 'EF-456-GH', 2) !== null); 
+echo $agence->getChiffreAffaires();         
