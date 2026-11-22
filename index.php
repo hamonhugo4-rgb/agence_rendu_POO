@@ -65,4 +65,11 @@ $agence->rendreVehicule('EF-456-GH', 16000);
 var_dump($agence->louerVehicule($jean, 'EF-456-GH', 2) === null); 
 $espace->entretenir();
 var_dump($agence->louerVehicule($jean, 'EF-456-GH', 2) !== null); 
-echo $agence->getChiffreAffaires();         
+echo $agence->getChiffreAffaires();  
+
+$agence->sauvegarder('./data/agence.txt');
+
+$copie = Agence::charger('./data/agence.txt');
+echo $copie->getNom();                  
+echo $copie->getChiffreAffaires();     
+echo count($copie->getVehicules()); 
