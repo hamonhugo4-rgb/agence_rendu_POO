@@ -6,7 +6,7 @@ require_once './traits/HistoriqueTrait.php';
 require_once './class/Vehicule.php';
 require_once './class/Voiture.php';
 require_once './class/Utilitaire.php';
-
+require_once './class/VeloElectrique.php';
 
 
 $clio = new Voiture('AB-123-CD', 'Renault', 'Clio', 42, 5);
@@ -31,5 +31,8 @@ try {
 }
 
 $master = new Utilitaire('IJ-789-KL', 'Renault', 'Master', 80, 12);
-echo $master;               // carte avec "Volume : 12 m³"
+echo $master;               
 echo $master->louer(2); 
+
+$velo = new VeloElectrique('MN-012-OP', 'Decathlon', 'Elops E-Bike', 15, 60);
+echo $velo->louer(8);
