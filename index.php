@@ -1,5 +1,6 @@
 <?php
 
+
 require_once './interfaces/Louable.php';
 require_once './interfaces/Entretenable.php';
 require_once './traits/HistoriqueTrait.php';
@@ -11,65 +12,108 @@ require_once './class/Client.php';
 require_once './class/Location.php';
 require_once './class/Agence.php';
 
+echo '<h1>Agence de location de véhicules</h1>';
+
+
+echo '<h2>1. Création de l\'agence et du parc</h2>';
+$agence = new Agence('Agence Seine Location');
 $clio = new Voiture('AB-123-CD', 'Renault', 'Clio', 42, 5);
 $espace = new Voiture('EF-456-GH', 'Renault', 'Espace', 60, 7);
-
-echo Vehicule::getNbVehicules();   
-echo $clio;                        
-echo $clio->louer(3);              
-echo $clio->louer(1);              
-echo $espace->louer(3);            
-$clio->rendre();
-$clio->ajouterKilometres(16000);
-var_dump($clio->besoinEntretien()); 
-$clio->entretenir();
-var_dump($clio->besoinEntretien()); 
-echo $clio->afficherHistorique();
-
-try {
-    new Voiture('abc', 'Renault', 'Clio', 42, 5);
-} catch (InvalidArgumentException $e) {
-    echo $e->getMessage();          
-}
-
 $master = new Utilitaire('IJ-789-KL', 'Renault', 'Master', 80, 12);
-echo $master;               
-echo $master->louer(2); 
-
 $velo = new VeloElectrique('MN-012-OP', 'Decathlon', 'Elops E-Bike', 15, 60);
-echo $velo->louer(8);
 
+$agence->ajouterVehicule($clio)
+    ->ajouterVehicule($espace)
+    ->ajouterVehicule($master)
+    ->ajouterVehicule($velo);
+echo '<p>Agence ' . $agence->getNom() . ' créée avec 4 véhicules.</p>';
+
+
+echo '<h2>2. Nombre de véhicules créés</h2>';
+echo '<p>' . Vehicule::getNbVehicules() . ' véhicules créés.</p>';
+
+
+echo '<h2>3. Le parc</h2>';
+echo $clio;
+echo $espace;
+echo $master;
+echo $velo;
+
+
+echo '<h2>4. Les clients</h2>';
 $jean = new Client('Dupont', 'Jean', 'jean.dupont@example.com', '0601020304');
-echo $jean;                 
+$marie = new Client('Martin', 'Marie', 'marie.martin@example.com');
+echo '<p>' . $jean . '</p>';
+echo '<p>' . $marie . '</p>';
+
 try {
-    new Client('Durand', 'Paul', 'email-invalide');
+    $paul = new Client('Durand', 'Paul', 'email-invalide');
 } catch (InvalidArgumentException $e) {
-    echo $e->getMessage();  
+    echo '<p>Erreur : ' . $e->getMessage() . '</p>';
 }
 
-$clio = new Voiture('AB-123-CD', 'Renault', 'Clio', 42, 5);
-$location = new Location($jean, $clio, 3, 151.2);
-echo $location;
 
-echo $location->getDateDebut();
+echo '<h2>5. Locations</h2>';
 
-$agence = new Agence('Agence Seine Location');
-$agence->ajouterVehicule($clio)->ajouterVehicule($espace);
+$location = $agence->louerVehicule($jean, 'EF-456-GH', 3);
+if ($location !== null) {
+    echo '<p>Location réussie : ' . $location . '</p>';
+} else {
+    echo '<p>Location impossible (Espace, 3 jours)</p>';
+}
 
-var_dump($agence->louerVehicule($jean, 'XX-000-XX', 2) === null); 
-echo $agence->louerVehicule($jean, 'EF-456-GH', 3);               
-var_dump($agence->louerVehicule($jean, 'EF-456-GH', 2) === null); 
-echo count($agence->getVehiculesDisponibles());                   
+$location = $agence->louerVehicule($marie, 'MN-012-OP', 8);
+if ($location !== null) {
+    echo '<p>Location réussie : ' . $location . '</p>';
+} else {
+    echo '<p>Location impossible (vélo, 8 jours)</p>';
+}
 
+
+$location = $agence->louerVehicule($marie, 'EF-456-GH', 2);
+if ($location !== null) {
+    echo '<p>Location réussie : ' . $location . '</p>';
+} else {
+    echo '<p>Location impossible : l\'Espace est déjà loué</p>';
+}
+
+
+echo '<h2>6. Retour de l\'Espace (16 000 km)</h2>';
 $agence->rendreVehicule('EF-456-GH', 16000);
-var_dump($agence->louerVehicule($jean, 'EF-456-GH', 2) === null); 
+echo '<p>Espace rendu.</p>';
+
+$location = $agence->louerVehicule($marie, 'EF-456-GH', 2);
+if ($location !== null) {
+    echo '<p>Location réussie : ' . $location . '</p>';
+} else {
+    echo '<p>Location impossible : l\'Espace a besoin d\'un entretien</p>';
+}
+
+
+echo '<h2>7. Entretien puis relocation</h2>';
 $espace->entretenir();
-var_dump($agence->louerVehicule($jean, 'EF-456-GH', 2) !== null); 
-echo $agence->getChiffreAffaires();  
+echo '<p>Entretien de l\'Espace effectué.</p>';
 
+$location = $agence->louerVehicule($marie, 'EF-456-GH', 2);
+if ($location !== null) {
+    echo '<p>Location réussie : ' . $location . '</p>';
+} else {
+    echo '<p>Location impossible (Espace, 2 jours)</p>';
+}
+
+
+echo '<h2>8. Bilan</h2>';
+echo '<h3>Locations</h3>';
+echo '<ul>';
+foreach ($agence->getLocations() as $uneLocation) {
+    echo '<li>' . $uneLocation . '</li>';
+}
+echo '</ul>';
+echo '<p>Chiffre d\'affaires : ' . $agence->getChiffreAffaires() . ' €</p>';
+echo '<h3>Historique de l\'Espace</h3>';
+echo $espace->afficherHistorique();
+
+
+echo '<h2>9. Sauvegarde</h2>';
 $agence->sauvegarder('./data/agence.txt');
-
-$copie = Agence::charger('./data/agence.txt');
-echo $copie->getNom();                  
-echo $copie->getChiffreAffaires();     
-echo count($copie->getVehicules()); 
+echo '<p>Agence sauvegardée dans /data/agence.txt</p>';
