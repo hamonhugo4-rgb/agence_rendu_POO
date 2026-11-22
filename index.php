@@ -8,7 +8,7 @@ require_once './class/Voiture.php';
 require_once './class/Utilitaire.php';
 require_once './class/VeloElectrique.php';
 require_once './class/Client.php';
-
+require_once './class/Location.php';
 
 $clio = new Voiture('AB-123-CD', 'Renault', 'Clio', 42, 5);
 $espace = new Voiture('EF-456-GH', 'Renault', 'Espace', 60, 7);
@@ -45,3 +45,9 @@ try {
 } catch (InvalidArgumentException $e) {
     echo $e->getMessage();  
 }
+
+$clio = new Voiture('AB-123-CD', 'Renault', 'Clio', 42, 5);
+$location = new Location($jean, $clio, 3, 151.2);
+echo $location;
+
+echo $location->getDateDebut();
