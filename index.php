@@ -7,6 +7,7 @@ require_once './class/Vehicule.php';
 require_once './class/Voiture.php';
 require_once './class/Utilitaire.php';
 require_once './class/VeloElectrique.php';
+require_once './class/Client.php';
 
 
 $clio = new Voiture('AB-123-CD', 'Renault', 'Clio', 42, 5);
@@ -36,3 +37,11 @@ echo $master->louer(2);
 
 $velo = new VeloElectrique('MN-012-OP', 'Decathlon', 'Elops E-Bike', 15, 60);
 echo $velo->louer(8);
+
+$jean = new Client('Dupont', 'Jean', 'jean.dupont@example.com', '0601020304');
+echo $jean;                 
+try {
+    new Client('Durand', 'Paul', 'email-invalide');
+} catch (InvalidArgumentException $e) {
+    echo $e->getMessage();  
+}
