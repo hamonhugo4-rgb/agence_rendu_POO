@@ -5,7 +5,9 @@ require_once './interfaces/Entretenable.php';
 require_once './traits/HistoriqueTrait.php';
 require_once './class/Vehicule.php';
 require_once './class/Voiture.php';
-require_once './class/VeloElectrique.php';
+require_once './class/Utilitaire.php';
+
+
 
 $clio = new Voiture('AB-123-CD', 'Renault', 'Clio', 42, 5);
 $espace = new Voiture('EF-456-GH', 'Renault', 'Espace', 60, 7);
